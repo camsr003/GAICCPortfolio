@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P5 Interactive Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .back-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>P5 Interactive Game</h1>
+    </header>
+    <main>
+        <button class="back-button" onclick="window.location.href='../index.html'">Back to Portfolio</button>
+        <div class="project-info">
+            <img src="room_background.png" alt="Game Background">
+            <h2>Interactive Game using P5.js</h2>
+            <p>Experience an interactive game created using P5.js. Extended using ChatGPT and CoPilot.</p>
+            <p>Source file: <a href="mySketch.js">mySketch.js</a></p>
+            <p>Other info: <a href="https://github.com/yourusername/GAICC-Portfolio">GitHub Repository</a></p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Cameron Richardson. All rights reserved.</p>
+    </footer>
+    <script>
+        let bgImage;
+        let hasKey = false;
+        let interactiveZones = [
+            { x: 400, y: 300, w: 150, h: 80, message: "The book contains ancient texts.", score: 10, clicked: false },
+            { x: 100, y: 230, w: 100, h: 150, message: "The candle flickers mysteriously.", score: 5, clicked: false, extinguished: false },
+            { x: 800, y: 170, w: 150, h: 400, message: "The sword hums with energy.", score: 15, clicked: false },
+            { x: 100, y: 450, w: 280, h: 120, message: "The closed book is covered in dust.", score: 8, clicked: false, revealsKey: true },
+            { x: 500, y: 390, w: 280, h: 120, message: "The chest is locked tight.", score: 12, clicked: false, requiresKey: true, unlocked: false },
+            { x: 200, y: 50, w: 200, h: 200, message: "The window lets in a cold breeze.", score: 7, clicked: false }
+        ];
+        let displayedMessage = "";
+        let score = 0;
+        let interactions = 0;
+        let gameEnded = false;
+        
+        function preload() {
+            bgImage = loadImage('room_background.png'); // Ensure the correct file name and path
+        }
+        
+        function setup() {
+            createCanvas(1000, windowHeight);
+        }
+        
+        function draw() {
+            background(bgImage);
+            if (gameEnded) {
+                displayEndScreen();
+            } else {
+                //drawInteractiveZones();
+                displayCoordinates();
+                checkMouseOverZones();
+                displayMessage();
+                displayScore();
+            }
+        }
+        
+        function displayCoordinates() {
+            fill(255);
+            textSize(16);
+            text(`X: ${mouseX}, Y: ${mouseY}`, 10, height - 10);
+        }
+        
+        function drawInteractiveZones() {
+            fill(255, 0, 0, 100); // Semi-transparent red
+            for (let zone of interactiveZones) {
+                rect(zone.x, zone.y, zone.w, zone.h);
+            }
+        }
+        
+        function checkMouseOverZones() {
+            let hovering = false;
+            for (let zone of interactiveZones) {
+                if (mouseX > zone.x && mouseX < zone.x + zone.w && mouseY > zone.y && mouseY < zone.y + zone.h) {
+                    hovering = true;
+                    break;
+                }
+            }
+            cursor(hovering ? 'pointer' : 'default');
+        }
+        
+        function mousePressed() {
+            if (gameEnded) return;
+            
+            for (let zone of interactiveZones) {
+                if (mouseX > zone.x && mouseX < zone.x + zone.w && mouseY > zone.y && mouseY < zone.y + zone.h) {
+                    if (zone.revealsKey) {
+                        hasKey = true;
+                        displayedMessage = "You open the book and find a key inside!";
+                    } else if (zone.requiresKey) {
+                        if (hasKey && !zone.unlocked) {
+                            displayedMessage = "You use the key to unlock the chest. Inside, you find treasure!";
+                            score += 20;
+                            zone.unlocked = true;
+                        } else if (!zone.unlocked) {
+                            displayedMessage = "The chest is locked tight. Maybe there's a key somewhere?";
+                        } else {
+                            displayedMessage = "The chest is already unlocked and empty.";
+                        }
+                    } else {
+                        displayedMessage = zone.message;
+                    }
+                    
+                    if (!zone.clicked) {
+                        score += zone.score;
+                        zone.clicked = true;
+                        interactions++;
+                    }
+                    
+                    if (zone.message.includes("cold breeze")) {
+                        let candleZone = interactiveZones.find(z => z.message.includes("candle"));
+                        if (candleZone && !candleZone.extinguished) {
+                            score -= 5;
+                            candleZone.extinguished = true;
+                            displayedMessage += " The candle is extinguished!";
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            if (interactions === interactiveZones.length) {
+                gameEnded = true;
+            }
+        }
+        
+        function displayMessage() {
+            if (displayedMessage) {
+                fill(255);
+                textSize(20);
+                text(displayedMessage, 50, height - 50);
+            }
+        }
+        
+        function displayScore() {
+            fill(255);
+            textSize(20);
+            text(`Score: ${score}`, width - 150, 30);
+        }
+        
+        function displayEndScreen() {
+            background(0);
+            fill(255);
+            textSize(30);
+            textAlign(CENTER, CENTER);
+            let endingMessage = score >= 50 ? "You have mastered the mysteries of the room!" : "You leave with more questions than answers.";
+            text(endingMessage, width / 2, height / 2);
+            text(`Final Score: ${score}`, width / 2, height / 2 + 50);
+        }
+        
+        function windowResized() {
+            resizeCanvas(1000, windowHeight);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Fiction</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .back-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Interactive Fiction</h1>
+    </header>
+    <main>
+        <button class="back-button" onclick="window.location.href='../index.html'">Back to Portfolio</button>
+        <div class="project-info">
+            <img src="Cover.jpg" alt="Cover Image">
+            <h2>Interactive Fiction using Inform 7</h2>
+            <p>Explore the world of interactive fiction with this project created using Inform 7. Extended using ChatGPT.</p>
+            <p>DS was created with Inform and has IFID F38191AA-5DDC-40FD-A7E8-64A11EFFC27B. To play a work like this one, you need an interpreter program: many are available, among them Gargoyle for MacOS, Linux or Windows; Spatterlight for MacOS; Windows Frotz or Windows Glulxe for Windows. Or you can play without downloading anything by following the 'Play In-Browser' link, using the Quixe interpreter. You'll need to have Javascript enabled on your web browser.</p>
+            <a href="play.html">Play Now</a>
+            <p>Source text: <a href="source.txt">source.txt</a></p>
+            <p>Story file: <a href="DS.gblorb">DS.gblorb</a></p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Cameron Richardson. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
